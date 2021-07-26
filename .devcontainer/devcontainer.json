@@ -1,0 +1,52 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/typescript-node
+{
+	"name": "Node.js & TypeScript",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update 'VARIANT' to pick a Node version: 12, 14, 16
+		"args": { 
+			"VARIANT": "16"
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.profiles.linux": {
+			"bash": {
+			  "path": "/bin/bash",
+			}
+		},
+		"workbench.colorCustomizations" : {
+			"terminal.foreground" : "#fafafa",
+		}
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"naumovs.color-highlight",
+		"streetsidesoftware.code-spell-checker",
+		"eamodio.gitlens",
+		"christian-kohler.npm-intellisense",
+		"christian-kohler.path-intellisense",
+		"esbenp.prettier-vscode",
+		"humao.rest-client",
+		"visualstudioexptteam.vscodeintellicode",
+		"jerrygoyal.shortcut-menu-bar",
+		"eg2.vscode-npm-script",
+		"ritwickdey.liveserver",
+		"github.vscode-pull-request-github",
+		"streetsidesoftware.code-spell-checker-portuguese-brazilian",
+		"burkeholland.simple-react-snippets"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [3000],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash -i install-dev-tools.sh",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "node"
+}
