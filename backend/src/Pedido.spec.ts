@@ -24,7 +24,7 @@ describe('Pedido', () => {
     pedido.addItem('Macarrão', 6, 5);
     pedido.addItem('Carne', 35, 2);
     pedido.addItem('Molho tomate', 5, 1);
-    pedido.addCupomDesconto(new CupomDesconto('DESC10', 10));
+    pedido.addCupomDesconto(new CupomDesconto('DESC10', 10, new Date()));
     const valorTotalPedido = pedido.getValorTotal();
     expect(valorTotalPedido).toBe(94.5);
   });

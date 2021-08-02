@@ -1,13 +1,10 @@
 import { CompoundAssignmentOperator } from 'typescript';
 import CupomDesconto from './CupomDesconto';
+import CupomDescontoRepository from './CupomDescontoRepository';
 import Pedido from './Pedido';
 
 export default class CadastrarPedidoUseCase {
-  private _cuponsDesconto: CupomDesconto[];
-
-  constructor() {
-    this._cuponsDesconto = [new CupomDesconto('DESC10', 10)];
-  }
+  constructor(private _cupomDescontoRepository: CupomDescontoRepository) {}
 
   execute(input: any) {
     const pedido = new Pedido(input.cpf);
@@ -15,8 +12,8 @@ export default class CadastrarPedidoUseCase {
       pedido.addItem(item.produto, item.valor, item.quantidade);
     }
     if (input.cupomDesconto) {
-      const cupomDesconto = this._cuponsDesconto.find((cupomDesconto) => cupomDesconto.codigo === input.cupomDesconto);
-      if (cupomDesconto) {
+      const cupomDesconto = this._cupomDescontoRepository.findCupomByCodigo(input.cupomDesconto);
+      if (cupomDesconto && !cupomDesconto.isExpirado()) {
         pedido.addCupomDesconto(cupomDesconto);
       }
     }

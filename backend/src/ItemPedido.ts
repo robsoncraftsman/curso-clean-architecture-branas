@@ -14,6 +14,6 @@ export default class ItemPedido {
   }
 
   get valorTotal() {
-    return this.valorUnitario * this.quantidade;
+    return this._valorUnitario * this._quantidade;
   }
 }

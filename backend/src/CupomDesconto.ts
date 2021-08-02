@@ -1,5 +1,5 @@
 export default class CupomDesconto {
-  constructor(private _codigo: string, private _valorDesconto: number) {}
+  constructor(private _codigo: string, private _valorDesconto: number, private _dataValidade: Date) {}
 
   get codigo() {
     return this._codigo;
@@ -7,5 +7,10 @@ export default class CupomDesconto {
 
   get valorDesconto() {
     return this._valorDesconto;
+  }
+
+  isExpirado() {
+    const dataAtual = new Date();
+    return this._dataValidade < dataAtual;
   }
 }
