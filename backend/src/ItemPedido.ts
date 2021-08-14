@@ -1,5 +1,7 @@
+import Produto from './Produto';
+
 export default class ItemPedido {
-  constructor(private _produto: string, private _valorUnitario: number, private _quantidade: number) {}
+  constructor(private _produto: Produto, private _valorUnitario: number, private _quantidade: number) {}
 
   get produto() {
     return this._produto;

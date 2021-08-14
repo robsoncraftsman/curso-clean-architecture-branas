@@ -1,6 +1,7 @@
 import Cpf from './Cpf';
 import CupomDesconto from './CupomDesconto';
 import ItemPedido from './ItemPedido';
+import Produto from './Produto';
 
 export default class Pedido {
   private _cupomDesconto!: CupomDesconto;
@@ -11,7 +12,11 @@ export default class Pedido {
     this._cpf = new Cpf(cpf);
   }
 
-  addItem(produto: string, valor: number, quantidade: number) {
+  get cpf() {
+    return this._cpf;
+  }
+
+  addItem(produto: Produto, valor: number, quantidade: number) {
     const itemPedido = new ItemPedido(produto, valor, quantidade);
     this._itens.push(itemPedido);
   }
@@ -29,6 +34,9 @@ export default class Pedido {
   }
 
   addCupomDesconto(cupomDesconto: CupomDesconto) {
+    if (cupomDesconto.isExpirado()) {
+      throw Error(`Cupom de desconto expirado: ${cupomDesconto.codigo}`);
+    }
     this._cupomDesconto = cupomDesconto;
   }
 }

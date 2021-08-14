@@ -1,6 +1,7 @@
 import CadastrarPedidoUseCase from './CadastrarPedidoUseCase';
 import CupomDesconto from './CupomDesconto';
 import CupomDescontoRepository from './CupomDescontoRepository';
+import Produto from './Produto';
 
 const createCupomDescontoValidoRepositoryMock = (): CupomDescontoRepository => {
   class CupomDescontoRepository implements CupomDescontoRepository {
@@ -28,9 +29,9 @@ describe('CadastrarPedidoUseCase', () => {
     const input = {
       cpf: '864.464.227-84',
       itens: [
-        { produto: 'Macarrão', quantidade: 6, valor: 5 },
-        { produto: 'Carne', quantidade: 35, valor: 2 },
-        { produto: 'Molho tomate', quantidade: 5, valor: 1 }
+        { produto: new Produto('Macarrão'), quantidade: 6, valor: 5 },
+        { produto: new Produto('Carne'), quantidade: 35, valor: 2 },
+        { produto: new Produto('Molho tomate'), quantidade: 5, valor: 1 }
       ],
       cupomDesconto: 'DESC10'
     };
@@ -44,15 +45,16 @@ describe('CadastrarPedidoUseCase', () => {
     const input = {
       cpf: '864.464.227-84',
       itens: [
-        { produto: 'Macarrão', quantidade: 6, valor: 5 },
-        { produto: 'Carne', quantidade: 35, valor: 2 },
-        { produto: 'Molho tomate', quantidade: 5, valor: 1 }
+        { produto: new Produto('Macarrão'), quantidade: 6, valor: 5 },
+        { produto: new Produto('Carne'), quantidade: 35, valor: 2 },
+        { produto: new Produto('Molho tomate'), quantidade: 5, valor: 1 }
       ],
       cupomDesconto: 'DESC10'
     };
     const cupomDescontoInvalidoRepositoryMock = createCupomDescontoInvalidoRepositoryMock();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(cupomDescontoInvalidoRepositoryMock);
-    const output = cadastrarPedidoUseCase.execute(input);
-    expect(output.valorTotalPedido).toBe(105);
+    expect(() => {
+      cadastrarPedidoUseCase.execute(input);
+    }).toThrow(new Error('Cupom de desconto expirado: DESC10'));
   });
 });
