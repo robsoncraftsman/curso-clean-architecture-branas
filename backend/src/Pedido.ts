@@ -4,7 +4,7 @@ import ItemPedido from './ItemPedido';
 import Produto from './Produto';
 
 export default class Pedido {
-  private _cupomDesconto!: CupomDesconto;
+  private _cupomDesconto?: CupomDesconto;
   private _cpf: Cpf;
   private _itens: ItemPedido[] = [];
 
@@ -14,6 +14,10 @@ export default class Pedido {
 
   get cpf() {
     return this._cpf;
+  }
+
+  get itens() {
+    return this._itens;
   }
 
   addItem(produto: Produto, valor: number, quantidade: number) {
@@ -28,9 +32,13 @@ export default class Pedido {
     return valorTotal * (1 - this._cupomDesconto.valorDesconto / 100);
   }
 
-  getValorTotal() {
-    const valorTotal = this._itens.reduce((totalPedido: number, item: ItemPedido) => totalPedido + item.valorTotal, 0);
-    return this.calcularDesconto(valorTotal);
+  getValorItens() {
+    return this._itens.reduce((totalPedido: number, item: ItemPedido) => totalPedido + item.valorTotal, 0);
+  }
+
+  getValorItensComDesconto() {
+    const totalItens = this.getValorItens();
+    return this.calcularDesconto(totalItens);
   }
 
   addCupomDesconto(cupomDesconto: CupomDesconto) {

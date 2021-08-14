@@ -9,8 +9,15 @@ export default class CupomDesconto {
     return this._valorDesconto;
   }
 
+  private removerHoras(date: Date) {
+    var date = new Date(date.getTime());
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
   isExpirado() {
-    const dataAtual = new Date();
-    return this._dataValidade < dataAtual;
+    const dataAtualSemHoras = this.removerHoras(new Date());
+    const dataValidadeSemHoras = this.removerHoras(this._dataValidade);
+    return dataValidadeSemHoras.getTime() < dataAtualSemHoras.getTime();
   }
 }

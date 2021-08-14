@@ -1,11 +1,18 @@
-import DimensaoProduto from './DimensaoProduto';
-
 export default class Produto {
+  private UM_METRO_CUBICO = 1000000;
+
   constructor(
+    private _id: string,
     private _nome: string,
     private _peso: number = 0,
-    private _dimensao: DimensaoProduto = new DimensaoProduto(0, 0, 0)
+    private _altura: number = 0,
+    private _largura: number = 0,
+    private _profundidade: number = 0
   ) {}
+
+  get id() {
+    return this._id;
+  }
 
   get nome() {
     return this._nome;
@@ -15,12 +22,8 @@ export default class Produto {
     return this._peso;
   }
 
-  get dimensao() {
-    return this._dimensao;
-  }
-
   get volume() {
-    return this._dimensao.volume;
+    return (this._altura * this._largura * this._profundidade) / this.UM_METRO_CUBICO;
   }
 
   get densidade() {

@@ -12,23 +12,23 @@ describe('Pedido', () => {
   test('Deve criar um pedido com três itens', () => {
     const cpf = '864.464.227-84';
     const pedido = new Pedido(cpf);
-    pedido.addItem(new Produto('Macarrão'), 6, 5);
-    pedido.addItem(new Produto('Carne'), 35, 2);
-    pedido.addItem(new Produto('Molho tomate'), 5, 1);
-    const valorTotalPedido = pedido.getValorTotal();
-    expect(valorTotalPedido).toBe(105);
+    pedido.addItem(new Produto('1', 'Macarrão'), 6, 5);
+    pedido.addItem(new Produto('2', 'Carne'), 35, 2);
+    pedido.addItem(new Produto('3', 'Molho tomate'), 5, 1);
+    const valorItensComDesconto = pedido.getValorItensComDesconto();
+    expect(valorItensComDesconto).toBe(105);
   });
 
   test('Deve criar um pedido com cupom desconto', () => {
     const cpf = '864.464.227-84';
     const pedido = new Pedido(cpf);
     const cupomDesconto = new CupomDesconto('DESC10', 10, new Date());
-    pedido.addItem(new Produto('Macarrão'), 6, 5);
-    pedido.addItem(new Produto('Carne'), 35, 2);
-    pedido.addItem(new Produto('Molho tomate'), 5, 1);
+    pedido.addItem(new Produto('1', 'Macarrão'), 6, 5);
+    pedido.addItem(new Produto('2', 'Carne'), 35, 2);
+    pedido.addItem(new Produto('3', 'Molho tomate'), 5, 1);
     pedido.addCupomDesconto(cupomDesconto);
-    const valorTotalPedido = pedido.getValorTotal();
-    expect(valorTotalPedido).toBe(94.5);
+    const valorItensComDesconto = pedido.getValorItensComDesconto();
+    expect(valorItensComDesconto).toBe(94.5);
   });
 
   test('Não deve dar desconto no pedido com cupom de desconto expirado', () => {
