@@ -5,13 +5,15 @@ import Produto from './Produto';
 describe('Pedido', () => {
   test('Não deve criar pedido com CPF Inválido', () => {
     const cpf = '000.000.000-00';
+    const cepDestino = '11.111.111-111';
 
-    expect(() => new Pedido(cpf)).toThrow(new Error('CPF Inválido'));
+    expect(() => new Pedido(cpf, cepDestino)).toThrow(new Error('CPF Inválido'));
   });
 
   test('Deve criar um pedido com três itens', () => {
     const cpf = '864.464.227-84';
-    const pedido = new Pedido(cpf);
+    const cepDestino = '11.111.111-111';
+    const pedido = new Pedido(cpf, cepDestino);
     pedido.addItem(new Produto('1', 'Macarrão'), 6, 5);
     pedido.addItem(new Produto('2', 'Carne'), 35, 2);
     pedido.addItem(new Produto('3', 'Molho tomate'), 5, 1);
@@ -21,7 +23,8 @@ describe('Pedido', () => {
 
   test('Deve criar um pedido com cupom desconto', () => {
     const cpf = '864.464.227-84';
-    const pedido = new Pedido(cpf);
+    const cepDestino = '11.111.111-111';
+    const pedido = new Pedido(cpf, cepDestino);
     const cupomDesconto = new CupomDesconto('DESC10', 10, new Date());
     pedido.addItem(new Produto('1', 'Macarrão'), 6, 5);
     pedido.addItem(new Produto('2', 'Carne'), 35, 2);
@@ -33,8 +36,9 @@ describe('Pedido', () => {
 
   test('Não deve dar desconto no pedido com cupom de desconto expirado', () => {
     const cpf = '864.464.227-84';
+    const cepDestino = '11.111.111-111';
     const cupomDescontoExpirado = new CupomDesconto('DESC10', 10, new Date(2020, 1, 1));
-    const pedido = new Pedido(cpf);
+    const pedido = new Pedido(cpf, cepDestino);
     expect(() => {
       pedido.addCupomDesconto(cupomDescontoExpirado);
     }).toThrow(new Error('Cupom de desconto expirado: DESC10'));

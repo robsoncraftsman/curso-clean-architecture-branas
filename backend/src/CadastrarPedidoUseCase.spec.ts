@@ -1,6 +1,7 @@
 import CadastrarPedidoUseCase, { CadastrarItemPedidoInput } from './CadastrarPedidoUseCase';
 import CalculadoraDistanciaEntreCeps from './CalculadoraDistanciaEntreCeps';
-import CalcularFreteService from './CalcularFreteService';
+import CalculadoraFretePedidoService from './CalculadoraFretePedidoService';
+import CalculadoraFreteProdutoService from './CalculadoraFreteProdutoService';
 import CupomDesconto from './CupomDesconto';
 import CupomDescontoRepository from './CupomDescontoRepository';
 import Produto from './Produto';
@@ -36,6 +37,17 @@ const createCalculadoraDistanciaEntreCepsStub = (): CalculadoraDistanciaEntreCep
   return new CalculadoraDistanciaEntreCepsStub();
 };
 
+const createCalculadoraFreteProdutoService = (): CalculadoraFreteProdutoService => {
+  return new CalculadoraFreteProdutoService();
+};
+
+const createCalculadoraFretePedidoService = (): CalculadoraFretePedidoService => {
+  return new CalculadoraFretePedidoService(
+    createCalculadoraDistanciaEntreCepsStub(),
+    createCalculadoraFreteProdutoService()
+  );
+};
+
 const createProdutoRepositoryStub = (): ProdutoRepository => {
   const produtos: Produto[] = [
     new Produto('1', 'Câmera', 1, 20, 15, 10),
@@ -58,9 +70,9 @@ const createProdutoRepositoryStub = (): ProdutoRepository => {
 
 const createItensPedido = (): CadastrarItemPedidoInput[] => {
   return [
-    { id_produto: '1', quantidade: 6, valor: 5 },
-    { id_produto: '2', quantidade: 35, valor: 2 },
-    { id_produto: '3', quantidade: 5, valor: 1 }
+    { id_produto: '1', valor: 6, quantidade: 5 },
+    { id_produto: '2', valor: 35, quantidade: 2 },
+    { id_produto: '3', valor: 5, quantidade: 1 }
   ];
 };
 
@@ -73,17 +85,16 @@ describe('CadastrarPedidoUseCase', () => {
     };
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
-    const calcularFreteService = new CalcularFreteService();
-    const calculadoraDistanciaEntreCepsStub = createCalculadoraDistanciaEntreCepsStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFreteService,
-      calculadoraDistanciaEntreCepsStub
+      calcularFretePedidoService
     );
     const output = cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
+    expect(output.valorFrete).toBe(510);
   });
 
   test('Deve dar desconto para pedido com cupom válido', () => {
@@ -95,17 +106,16 @@ describe('CadastrarPedidoUseCase', () => {
     };
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
-    const calcularFreteService = new CalcularFreteService();
-    const calculadoraDistanciaEntreCepsStub = createCalculadoraDistanciaEntreCepsStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFreteService,
-      calculadoraDistanciaEntreCepsStub
+      calcularFretePedidoService
     );
     const output = cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(94.5);
+    expect(output.valorFrete).toBe(510);
   });
 
   test('Não deve dar desconto para pedido com cupom inválido', () => {
@@ -117,13 +127,11 @@ describe('CadastrarPedidoUseCase', () => {
     };
     const cupomDescontoValidoRepositoryStub = createCupomDescontoInvalidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
-    const calcularFreteService = new CalcularFreteService();
-    const calculadoraDistanciaEntreCepsStub = createCalculadoraDistanciaEntreCepsStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFreteService,
-      calculadoraDistanciaEntreCepsStub
+      calcularFretePedidoService
     );
     expect(() => {
       cadastrarPedidoUseCase.execute(input);
@@ -138,17 +146,15 @@ describe('CadastrarPedidoUseCase', () => {
     };
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
-    const calcularFreteService = new CalcularFreteService();
-    const calculadoraDistanciaEntreCepsStub = createCalculadoraDistanciaEntreCepsStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFreteService,
-      calculadoraDistanciaEntreCepsStub
+      calcularFretePedidoService
     );
     const output = cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
-    expect(output.valorFrete).toBe(60 + 1050 + 2000);
+    expect(output.valorFrete).toBe(510);
   });
 });

@@ -1,6 +1,6 @@
 import Produto from './Produto';
 
-export default class CalcularFreteService {
+export default class CalculadoraFreteProdutoService {
   private VALOR_MINIMO_FRETE = 10;
 
   calcularFreteProduto(produto: Produto, distancia: number) {

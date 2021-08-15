@@ -1,13 +1,12 @@
-import CalculadoraDistanciaEntreCeps from './CalculadoraDistanciaEntreCeps';
-import CalcularFreteService from './CalcularFreteService';
+import CalculadoraFretePedidoService from './CalculadoraFretePedidoService';
 import CupomDescontoRepository from './CupomDescontoRepository';
 import Pedido from './Pedido';
 import ProdutoRepository from './ProdutoRepository';
 
 export type CadastrarItemPedidoInput = {
   id_produto: string;
-  quantidade: number;
   valor: number;
+  quantidade: number;
 };
 
 export type CadastrarPedidoInput = {
@@ -27,12 +26,11 @@ export default class CadastrarPedidoUseCase {
   constructor(
     private _cupomDescontoRepository: CupomDescontoRepository,
     private _produtoRepository: ProdutoRepository,
-    private _calcularFreteService: CalcularFreteService,
-    private _calculadoraDistanciaEntreCeps: CalculadoraDistanciaEntreCeps
+    private _calculadoraFretePedidoService: CalculadoraFretePedidoService
   ) {}
 
   execute(input: CadastrarPedidoInput): CadastrarPedidoOutput {
-    const pedido = new Pedido(input.cpf);
+    const pedido = new Pedido(input.cpf, input.cepDestino);
     for (const item of input.itens) {
       const produto = this._produtoRepository.findProdutoById(item.id_produto);
       pedido.addItem(produto, item.valor, item.quantidade);
@@ -43,20 +41,12 @@ export default class CadastrarPedidoUseCase {
         pedido.addCupomDesconto(cupomDesconto);
       }
     }
-    const distancia = this._calculadoraDistanciaEntreCeps.calcularDistanciaEntreCeps(
-      '11.111.111-111',
-      input.cepDestino
-    );
-    let valorFrete = pedido.itens.reduce(
-      (valorFrete, itemPedido) =>
-        valorFrete +
-        this._calcularFreteService.calcularFreteProduto(itemPedido.produto, distancia) * itemPedido.quantidade,
-      0
-    );
+    const valorFrete = this._calculadoraFretePedidoService.calcularFretePedido(pedido);
+    pedido.setValorFrete(valorFrete);
     return {
       valorItens: pedido.getValorItens(),
       valorItensComDesconto: pedido.getValorItensComDesconto(),
-      valorFrete
+      valorFrete: pedido.getValorFrete()
     };
   }
 }

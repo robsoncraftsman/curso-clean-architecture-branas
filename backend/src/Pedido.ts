@@ -6,14 +6,21 @@ import Produto from './Produto';
 export default class Pedido {
   private _cupomDesconto?: CupomDesconto;
   private _cpf: Cpf;
+  private _cepDestino: string;
+  private _valorFrete: number = 0;
   private _itens: ItemPedido[] = [];
 
-  constructor(cpf: string) {
+  constructor(cpf: string, cepDestino: string) {
     this._cpf = new Cpf(cpf);
+    this._cepDestino = cepDestino;
   }
 
   get cpf() {
     return this._cpf;
+  }
+
+  get cepDestino() {
+    return this._cepDestino;
   }
 
   get itens() {
@@ -39,6 +46,14 @@ export default class Pedido {
   getValorItensComDesconto() {
     const totalItens = this.getValorItens();
     return this.calcularDesconto(totalItens);
+  }
+
+  setValorFrete(valorFrete: number) {
+    this._valorFrete = valorFrete;
+  }
+
+  getValorFrete() {
+    return this._valorFrete;
   }
 
   addCupomDesconto(cupomDesconto: CupomDesconto) {
