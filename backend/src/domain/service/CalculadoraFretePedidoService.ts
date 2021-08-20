@@ -1,6 +1,6 @@
-import CalculadoraDistanciaEntreCeps from './CalculadoraDistanciaEntreCeps';
+import Pedido from '../entity/Pedido';
+import CalculadoraDistanciaEntreCeps from '../gateway/CalculadoraDistanciaEntreCeps';
 import CalculadoraFreteProdutoService from './CalculadoraFreteProdutoService';
-import Pedido from './Pedido';
 
 export default class CalculadoraFretePedidoService {
   constructor(

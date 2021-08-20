@@ -1,7 +1,7 @@
-import CalculadoraFretePedidoService from './CalculadoraFretePedidoService';
-import CupomDescontoRepository from './CupomDescontoRepository';
-import Pedido from './Pedido';
-import ProdutoRepository from './ProdutoRepository';
+import Pedido from '../domain/entity/Pedido';
+import CupomDescontoRepository from '../domain/repository/CupomDescontoRepository';
+import ProdutoRepository from '../domain/repository/ProdutoRepository';
+import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
 
 export type CadastrarItemPedidoInput = {
   id_produto: string;

@@ -1,11 +1,11 @@
 import CadastrarPedidoUseCase, { CadastrarItemPedidoInput } from './CadastrarPedidoUseCase';
-import CalculadoraDistanciaEntreCeps from './CalculadoraDistanciaEntreCeps';
-import CalculadoraFretePedidoService from './CalculadoraFretePedidoService';
-import CalculadoraFreteProdutoService from './CalculadoraFreteProdutoService';
-import CupomDesconto from './CupomDesconto';
-import CupomDescontoRepository from './CupomDescontoRepository';
-import Produto from './Produto';
-import ProdutoRepository from './ProdutoRepository';
+import CalculadoraDistanciaEntreCeps from '../domain/gateway/CalculadoraDistanciaEntreCeps';
+import CupomDescontoRepository from '../domain/repository/CupomDescontoRepository';
+import ProdutoRepository from '../domain/repository/ProdutoRepository';
+import CupomDesconto from '../domain/entity/CupomDesconto';
+import CalculadoraFreteProdutoService from '../domain/service/CalculadoraFreteProdutoService';
+import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
+import Produto from '../domain/entity/Produto';
 
 const createCupomDescontoValidoRepositoryStub = (): CupomDescontoRepository => {
   class CupomDescontoRepositoryStub implements CupomDescontoRepository {

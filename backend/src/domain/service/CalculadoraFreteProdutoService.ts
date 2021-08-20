@@ -1,4 +1,4 @@
-import Produto from './Produto';
+import Produto from '../entity/Produto';
 
 export default class CalculadoraFreteProdutoService {
   private VALOR_MINIMO_FRETE = 10;

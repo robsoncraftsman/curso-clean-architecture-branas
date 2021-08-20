@@ -1,5 +1,5 @@
+import Produto from '../entity/Produto';
 import CalculadoraFreteProdutoService from './CalculadoraFreteProdutoService';
-import Produto from './Produto';
 
 describe('Calcular Frete Produto', () => {
   const createCalculadoraFreteProdutoService = (): CalculadoraFreteProdutoService => {

@@ -1,4 +1,4 @@
-import CPFValidator from './CpfValidator';
+import CPFValidator from '../validator/CpfValidator';
 
 export default class Cpf {
   private _cpf: string;

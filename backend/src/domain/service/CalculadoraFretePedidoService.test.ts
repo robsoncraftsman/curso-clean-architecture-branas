@@ -1,8 +1,8 @@
-import CalculadoraDistanciaEntreCeps from './CalculadoraDistanciaEntreCeps';
+import Pedido from '../entity/Pedido';
+import Produto from '../entity/Produto';
+import CalculadoraDistanciaEntreCeps from '../gateway/CalculadoraDistanciaEntreCeps';
 import CalculadoraFretePedidoService from './CalculadoraFretePedidoService';
 import CalculadoraFreteProdutoService from './CalculadoraFreteProdutoService';
-import Pedido from './Pedido';
-import Produto from './Produto';
 
 describe('Calcular Frete Pedido', () => {
   const createCalculadoraDistanciaEntreCepsStub = (): CalculadoraDistanciaEntreCeps => {
