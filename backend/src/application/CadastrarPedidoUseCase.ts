@@ -30,7 +30,7 @@ export default class CadastrarPedidoUseCase {
   ) {}
 
   execute(input: CadastrarPedidoInput): CadastrarPedidoOutput {
-    const pedido = new Pedido(input.cpf, input.cepDestino);
+    const pedido = new Pedido('1', input.cpf, input.cepDestino);
     for (const item of input.itens) {
       const produto = this._produtoRepository.findProdutoById(item.id_produto);
       pedido.addItem(produto, item.valor, item.quantidade);

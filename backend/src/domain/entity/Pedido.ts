@@ -4,15 +4,21 @@ import ItemPedido from './ItemPedido';
 import Produto from './Produto';
 
 export default class Pedido {
-  private _cupomDesconto?: CupomDesconto;
+  private _id: string;
   private _cpf: Cpf;
   private _cepDestino: string;
   private _valorFrete: number = 0;
   private _itens: ItemPedido[] = [];
+  private _cupomDesconto?: CupomDesconto;
 
-  constructor(cpf: string, cepDestino: string) {
+  constructor(id: string, cpf: string, cepDestino: string) {
+    this._id = id;
     this._cpf = new Cpf(cpf);
     this._cepDestino = cepDestino;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get cpf() {

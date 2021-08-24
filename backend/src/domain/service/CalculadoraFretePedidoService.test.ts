@@ -28,7 +28,8 @@ describe('Calcular Frete Pedido', () => {
   test('Deve calcular frete para o pedido', () => {
     const cpf = '864.464.227-84';
     const cepDestino = '11.111.111-111';
-    const pedido = new Pedido(cpf, cepDestino);
+    const id_pedido = '1';
+    const pedido = new Pedido(id_pedido, cpf, cepDestino);
     pedido.addItem(new Produto('1', 'Câmera', 1, 20, 15, 10), 6, 5);
     const calculadoraFretePedidoService = createCalculadoraFretePedidoService();
     const valorFretePedido = calculadoraFretePedidoService.calcularFretePedido(pedido);
