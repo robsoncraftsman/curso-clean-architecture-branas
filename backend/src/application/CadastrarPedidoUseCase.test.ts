@@ -50,16 +50,16 @@ const createCalculadoraFretePedidoService = (): CalculadoraFretePedidoService =>
 
 const createProdutoRepositoryStub = (): ProdutoRepository => {
   const produtos: Produto[] = [
-    new Produto('1', 'Câmera', 1, 20, 15, 10),
-    new Produto('2', 'Guitarra', 3, 100, 30, 10),
-    new Produto('3', 'Geladeira', 40, 200, 100, 50)
+    new Produto('1', 'Câmera', 1, 20, 15, 10, 1),
+    new Produto('2', 'Guitarra', 3, 100, 30, 10, 1),
+    new Produto('3', 'Geladeira', 40, 200, 100, 50, 1)
   ];
 
   class ProdutoRepositoryStub implements ProdutoRepository {
-    findProdutoById(id: string): Produto {
+    findById(id: string): Promise<Produto | undefined> {
       const produtoEncontrado = produtos.find((produto) => id === produto.id);
       if (produtoEncontrado != null) {
-        return produtoEncontrado;
+        return Promise.resolve(produtoEncontrado);
       }
       throw Error(`Produto ${id} não encontrado`);
     }
@@ -77,7 +77,7 @@ const createItensPedido = (): CadastrarItemPedidoInput[] => {
 };
 
 describe('CadastrarPedidoUseCase', () => {
-  test('Deve criar pedido sem cupom de desconto', () => {
+  test('Deve criar pedido sem cupom de desconto', async () => {
     const input = {
       cpf: '864.464.227-84',
       itens: createItensPedido(),
@@ -91,13 +91,13 @@ describe('CadastrarPedidoUseCase', () => {
       produtoRepositoryStub,
       calcularFretePedidoService
     );
-    const output = cadastrarPedidoUseCase.execute(input);
+    const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
   });
 
-  test('Deve dar desconto para pedido com cupom válido', () => {
+  test('Deve dar desconto para pedido com cupom válido', async () => {
     const input = {
       cpf: '864.464.227-84',
       itens: createItensPedido(),
@@ -112,13 +112,13 @@ describe('CadastrarPedidoUseCase', () => {
       produtoRepositoryStub,
       calcularFretePedidoService
     );
-    const output = cadastrarPedidoUseCase.execute(input);
+    const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(94.5);
     expect(output.valorFrete).toBe(510);
   });
 
-  test('Não deve dar desconto para pedido com cupom inválido', () => {
+  test('Não deve dar desconto para pedido com cupom inválido', async () => {
     const input = {
       cpf: '864.464.227-84',
       itens: createItensPedido(),
@@ -133,12 +133,12 @@ describe('CadastrarPedidoUseCase', () => {
       produtoRepositoryStub,
       calcularFretePedidoService
     );
-    expect(() => {
-      cadastrarPedidoUseCase.execute(input);
-    }).toThrow(new Error('Cupom de desconto expirado: DESC10_INVALIDO'));
+    expect(async () => {
+      await cadastrarPedidoUseCase.execute(input);
+    }).rejects.toThrow(new Error('Cupom de desconto expirado: DESC10_INVALIDO'));
   });
 
-  test('Deve criar pedido com frete', () => {
+  test('Deve criar pedido com frete', async () => {
     const input = {
       cpf: '864.464.227-84',
       itens: createItensPedido(),
@@ -152,7 +152,7 @@ describe('CadastrarPedidoUseCase', () => {
       produtoRepositoryStub,
       calcularFretePedidoService
     );
-    const output = cadastrarPedidoUseCase.execute(input);
+    const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);

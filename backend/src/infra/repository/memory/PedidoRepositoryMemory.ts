@@ -8,8 +8,7 @@ export default class PedidoRepositoryMemory implements PedidoRepository {
     this._pedidos.push(pedido);
   }
 
-  findById(id_pedido: string): Pedido | null {
-    const pedidoEncontrado = this._pedidos.find((pedido) => pedido.id === id_pedido);
-    return pedidoEncontrado || null;
+  findById(id_pedido: string): Pedido | undefined {
+    return this._pedidos.find((pedido) => pedido.id === id_pedido);
   }
 }

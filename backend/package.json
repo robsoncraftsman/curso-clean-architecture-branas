@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/robsoncraftsman/curso-clean-architecture-branas#readme",
   "dependencies": {
+    "pg-promise": "^10.11.0",
     "typescript": "^4.3.5"
   },
   "devDependencies": {

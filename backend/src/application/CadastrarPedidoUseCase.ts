@@ -29,10 +29,11 @@ export default class CadastrarPedidoUseCase {
     private _calculadoraFretePedidoService: CalculadoraFretePedidoService
   ) {}
 
-  execute(input: CadastrarPedidoInput): CadastrarPedidoOutput {
+  async execute(input: CadastrarPedidoInput): Promise<CadastrarPedidoOutput> {
     const pedido = new Pedido('1', input.cpf, input.cepDestino);
     for (const item of input.itens) {
-      const produto = this._produtoRepository.findProdutoById(item.id_produto);
+      const produto = await this._produtoRepository.findById(item.id_produto);
+      if (!produto) throw Error(`Produto ${item.id_produto} não encontrado`);
       pedido.addItem(produto, item.valor, item.quantidade);
     }
     if (input.cupomDesconto) {

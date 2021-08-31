@@ -7,7 +7,8 @@ export default class Produto {
     private _peso: number = 0,
     private _altura: number = 0,
     private _largura: number = 0,
-    private _profundidade: number = 0
+    private _profundidade: number = 0,
+    private _valor: number = 0
   ) {}
 
   get id() {
@@ -20,6 +21,10 @@ export default class Produto {
 
   get peso() {
     return this._peso;
+  }
+
+  get valor() {
+    return this._valor;
   }
 
   get volume() {
