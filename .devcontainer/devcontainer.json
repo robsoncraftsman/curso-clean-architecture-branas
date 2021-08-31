@@ -48,5 +48,8 @@
 	"postCreateCommand": "bash -i install-dev-tools.sh",
 
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "node"
+	"remoteUser": "node",
+
+	// Network was changed to be able to access the localhost
+	"runArgs": ["--network=host"]
 }
