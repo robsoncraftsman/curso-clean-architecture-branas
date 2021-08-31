@@ -37,7 +37,7 @@ export default class CadastrarPedidoUseCase {
       pedido.addItem(produto, item.valor, item.quantidade);
     }
     if (input.cupomDesconto) {
-      const cupomDesconto = this._cupomDescontoRepository.findCupomByCodigo(input.cupomDesconto);
+      const cupomDesconto = await this._cupomDescontoRepository.findByCodigo(input.cupomDesconto);
       if (cupomDesconto) {
         pedido.addCupomDesconto(cupomDesconto);
       }

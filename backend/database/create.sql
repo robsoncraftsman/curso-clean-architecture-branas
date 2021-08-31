@@ -18,3 +18,15 @@ insert into ccca.produto (id, nome, peso, altura, largura, profundidade, valor)
 
 insert into ccca.produto (id, nome, peso, altura, largura, profundidade, valor) 
     values ('3', 'Geladeira', 40, 200, 100, 50, 1);
+
+create table ccca.cupomDesconto (
+    codigo varchar(32) PRIMARY KEY,
+    valorDesconto numeric,
+    dataValidade timestamp
+);
+
+insert into ccca.cupomDesconto (codigo, valorDesconto, dataValidade)
+    values ('DESC10', 10, '2050-01-01T00:00:00');
+
+insert into ccca.cupomDesconto (codigo, valorDesconto, dataValidade)
+    values ('DESC10_INVALIDO', 10, '2000-01-01T00:00:00');

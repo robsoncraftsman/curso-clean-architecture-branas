@@ -9,9 +9,10 @@ import Produto from '../domain/entity/Produto';
 
 const createCupomDescontoValidoRepositoryStub = (): CupomDescontoRepository => {
   class CupomDescontoRepositoryStub implements CupomDescontoRepository {
-    findCupomByCodigo(codigo: string): CupomDesconto {
+    findByCodigo(codigo: string): Promise<CupomDesconto | undefined> {
       const dataValidade = new Date();
-      return new CupomDesconto('DESC10', 10, dataValidade);
+      const cupomDescontoValido = new CupomDesconto('DESC10', 10, dataValidade);
+      return Promise.resolve(cupomDescontoValido);
     }
   }
   return new CupomDescontoRepositoryStub();
@@ -19,10 +20,11 @@ const createCupomDescontoValidoRepositoryStub = (): CupomDescontoRepository => {
 
 const createCupomDescontoInvalidoRepositoryStub = (): CupomDescontoRepository => {
   class CupomDescontoRepositoryStub implements CupomDescontoRepository {
-    findCupomByCodigo(codigo: string): CupomDesconto {
+    findByCodigo(codigo: string): Promise<CupomDesconto | undefined> {
       const dataValidade = new Date();
       dataValidade.setDate(dataValidade.getDate() - 1);
-      return new CupomDesconto('DESC10_INVALIDO', 10, dataValidade);
+      const cupomDescontoInvalido = new CupomDesconto('DESC10_INVALIDO', 10, dataValidade);
+      return Promise.resolve(cupomDescontoInvalido);
     }
   }
   return new CupomDescontoRepositoryStub();
