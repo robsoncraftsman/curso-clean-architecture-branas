@@ -30,3 +30,13 @@ insert into ccca.cupomDesconto (codigo, valorDesconto, dataValidade)
 
 insert into ccca.cupomDesconto (codigo, valorDesconto, dataValidade)
     values ('DESC10_INVALIDO', 10, '2000-01-01T00:00:00');
+
+create table ccca.pedido (
+    id varchar(32) PRIMARY KEY,
+    cpf varchar(11),
+    cepDestino varchar(8),
+    cupomDesconto varchar(32)
+);
+
+insert into ccca.pedido (id, cpf, cepdestino, cupomdesconto)
+    values ('1','86446422784','12345678', 'DESC10');

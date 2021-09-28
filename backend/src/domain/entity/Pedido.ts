@@ -22,11 +22,18 @@ export default class Pedido {
   }
 
   get cpf() {
-    return this._cpf;
+    return this._cpf.cpf;
   }
 
   get cepDestino() {
     return this._cepDestino;
+  }
+
+  get cupomDesconto() {
+    if (this._cupomDesconto) {
+      return this._cupomDesconto.codigo;
+    }
+    return null;
   }
 
   get itens() {

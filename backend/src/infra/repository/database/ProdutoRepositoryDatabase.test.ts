@@ -1,15 +1,15 @@
 import PostgresDatabase from '../../database/postgres/PostgresDatabase';
 import ProdutoRepositoryDatabase from './ProdutoRepositoryDatabase';
 
-const postgresqlDatabase = new PostgresDatabase();
+const postgresDatabase = new PostgresDatabase();
 
 const createProdutoRepository = () => {
-  return new ProdutoRepositoryDatabase(postgresqlDatabase);
+  return new ProdutoRepositoryDatabase(postgresDatabase);
 };
 
 describe('Produto Repository Database', () => {
-  beforeAll(() => {
-    postgresqlDatabase.connect();
+  beforeAll(async () => {
+    await postgresDatabase.connect();
   });
 
   test('Deve retornar um produto', async () => {
@@ -25,7 +25,7 @@ describe('Produto Repository Database', () => {
     expect(produto).toBeFalsy();
   });
 
-  afterAll(() => {
-    postgresqlDatabase.disconnect();
+  afterAll(async () => {
+    await postgresDatabase.disconnect();
   });
 });

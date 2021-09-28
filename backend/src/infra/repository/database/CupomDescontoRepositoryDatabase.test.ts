@@ -1,15 +1,15 @@
 import PostgresDatabase from '../../database/postgres/PostgresDatabase';
 import CupomDescontoRepositoryDatabase from './CupomDescontoRepositoryDatabase';
 
-const postgresqlDatabase = new PostgresDatabase();
+const postgresDatabase = new PostgresDatabase();
 
 const createCupomDescontoRepository = () => {
-  return new CupomDescontoRepositoryDatabase(postgresqlDatabase);
+  return new CupomDescontoRepositoryDatabase(postgresDatabase);
 };
 
 describe('Cupom Desconto Repository', () => {
-  beforeAll(() => {
-    postgresqlDatabase.connect();
+  beforeAll(async () => {
+    await postgresDatabase.connect();
   });
 
   test('Deve retornar um cupom de desconto', async () => {
@@ -25,7 +25,7 @@ describe('Cupom Desconto Repository', () => {
     expect(cupomDesconto).toBeFalsy();
   });
 
-  afterAll(() => {
-    postgresqlDatabase.disconnect();
+  afterAll(async () => {
+    await postgresDatabase.disconnect();
   });
 });
