@@ -6,6 +6,7 @@ import CupomDesconto from '../domain/entity/CupomDesconto';
 import CalculadoraFreteProdutoService from '../domain/service/CalculadoraFreteProdutoService';
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
 import Produto from '../domain/entity/Produto';
+import PedidoService from '../domain/service/PedidoService';
 
 const createCupomDescontoValidoRepositoryStub = (): CupomDescontoRepository => {
   class CupomDescontoRepositoryStub implements CupomDescontoRepository {
@@ -50,6 +51,10 @@ const createCalculadoraFretePedidoService = (): CalculadoraFretePedidoService =>
   );
 };
 
+const createPedidoService = (): PedidoService => {
+  return new PedidoService();
+};
+
 const createProdutoRepositoryStub = (): ProdutoRepository => {
   const produtos: Produto[] = [
     new Produto('1', 'Câmera', 1, 20, 15, 10, 1),
@@ -88,10 +93,12 @@ describe('CadastrarPedidoUseCase', () => {
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFretePedidoService
+      calcularFretePedidoService,
+      pedidoService
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
@@ -109,10 +116,12 @@ describe('CadastrarPedidoUseCase', () => {
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFretePedidoService
+      calcularFretePedidoService,
+      pedidoService
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
@@ -130,10 +139,12 @@ describe('CadastrarPedidoUseCase', () => {
     const cupomDescontoValidoRepositoryStub = createCupomDescontoInvalidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFretePedidoService
+      calcularFretePedidoService,
+      pedidoService
     );
     expect(async () => {
       await cadastrarPedidoUseCase.execute(input);
@@ -149,10 +160,12 @@ describe('CadastrarPedidoUseCase', () => {
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
-      calcularFretePedidoService
+      calcularFretePedidoService,
+      pedidoService
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);

@@ -2,6 +2,7 @@ import Pedido from '../domain/entity/Pedido';
 import CupomDescontoRepository from '../domain/repository/CupomDescontoRepository';
 import ProdutoRepository from '../domain/repository/ProdutoRepository';
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
+import PedidoService from '../domain/service/PedidoService';
 
 export type CadastrarItemPedidoInput = {
   id_produto: string;
@@ -26,11 +27,13 @@ export default class CadastrarPedidoUseCase {
   constructor(
     private _cupomDescontoRepository: CupomDescontoRepository,
     private _produtoRepository: ProdutoRepository,
-    private _calculadoraFretePedidoService: CalculadoraFretePedidoService
+    private _calculadoraFretePedidoService: CalculadoraFretePedidoService,
+    private _pedidoService: PedidoService
   ) {}
 
   async execute(input: CadastrarPedidoInput): Promise<CadastrarPedidoOutput> {
-    const pedido = new Pedido('1', input.cpf, input.cepDestino);
+    const numeroPedido = this._pedidoService.gerarNumeroPedido();
+    const pedido = new Pedido(numeroPedido, input.cpf, input.cepDestino);
     for (const item of input.itens) {
       const produto = await this._produtoRepository.findById(item.id_produto);
       if (!produto) throw Error(`Produto ${item.id_produto} não encontrado`);
