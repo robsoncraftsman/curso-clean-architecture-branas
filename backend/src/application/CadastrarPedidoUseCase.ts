@@ -47,6 +47,7 @@ export default class CadastrarPedidoUseCase {
     }
     const valorFrete = this._calculadoraFretePedidoService.calcularFretePedido(pedido);
     pedido.setValorFrete(valorFrete);
+
     return {
       valorItens: pedido.getValorItens(),
       valorItensComDesconto: pedido.getValorItensComDesconto(),

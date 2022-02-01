@@ -1,5 +1,7 @@
 import CupomDesconto from '../../../domain/entity/CupomDesconto';
+import ItemPedido from '../../../domain/entity/ItemPedido';
 import Pedido from '../../../domain/entity/Pedido';
+import Produto from '../../../domain/entity/Produto';
 import PostgresDatabase from '../../database/postgres/PostgresDatabase';
 import PedidoRepositoryDatabase from './PedidoRepositoryDatabase';
 
@@ -32,10 +34,13 @@ describe('Pedido Repository Database', () => {
     await pedidoRepository.delete('99');
     const novoPedido = new Pedido('99', '86446422784', '11111111');
     novoPedido.addCupomDesconto(new CupomDesconto('DESC10', 10, new Date()));
+    const produto = new Produto('1', 'Câmera', 1, 20, 15, 10, 1);
+    novoPedido.addItem(produto, 1, 2);
     await pedidoRepository.save(novoPedido);
     const pedidoEncontrado = await pedidoRepository.findById('99');
     expect(pedidoEncontrado).toBeTruthy();
     expect(pedidoEncontrado!.id).toBe('99');
+    expect(pedidoEncontrado?.itens.length).toBe(1);
   });
 
   afterAll(async () => {

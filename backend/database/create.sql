@@ -40,3 +40,13 @@ create table ccca.pedido (
 
 insert into ccca.pedido (id, cpf, cepdestino, cupomdesconto)
     values ('1','86446422784','12345678', 'DESC10');
+
+create table ccca.itemPedido (
+    id varchar(32) PRIMARY KEY,
+    id_pedido varchar(32),
+    id_produto varchar(32),
+    valorUnitario numeric,
+    quantidade numeric
+)
+
+insert into ccca.itemPedido (id, id_pedido, id_produto, valorUnitario, quantidade) values ('1','1','1',1,1)
