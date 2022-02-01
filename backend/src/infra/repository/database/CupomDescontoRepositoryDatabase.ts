@@ -8,7 +8,8 @@ export default class CupomDescontoRepositoryDatabase implements CupomDescontoRep
   async findByCodigo(codigo: string): Promise<CupomDesconto | undefined> {
     const cupomDb = await this.database.findOne('select * from ccca.cupomDesconto where codigo = $1', [codigo]);
     if (!cupomDb) return;
-    const cupomDesconto = new CupomDesconto(cupomDb.codigo, cupomDb.valorDesconto, cupomDb.dataValidade);
+    console.log(cupomDb.datavalidade);
+    const cupomDesconto = new CupomDesconto(cupomDb.codigo, parseInt(cupomDb.valordesconto), cupomDb.datavalidade);
     return cupomDesconto;
   }
 }

@@ -17,6 +17,8 @@ describe('Cupom Desconto Repository', () => {
     const cupomDesconto = await cupomDescontoRepository.findByCodigo('DESC10');
     expect(cupomDesconto).toBeTruthy();
     expect(cupomDesconto!.codigo).toBe('DESC10');
+    expect(cupomDesconto!.valorDesconto).toBe(10);
+    expect(cupomDesconto!.dataValidade).toStrictEqual(new Date('2050-01-01'));
   });
 
   test('Não deve retornar um cupom de desconto', async () => {

@@ -9,6 +9,10 @@ export default class CupomDesconto {
     return this._valorDesconto;
   }
 
+  get dataValidade() {
+    return this._dataValidade;
+  }
+
   private removerHoras(date: Date) {
     var date = new Date(date.getTime());
     date.setHours(0, 0, 0, 0);
