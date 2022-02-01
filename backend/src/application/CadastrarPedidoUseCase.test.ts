@@ -7,6 +7,12 @@ import CalculadoraFreteProdutoService from '../domain/service/CalculadoraFretePr
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
 import Produto from '../domain/entity/Produto';
 import PedidoService from '../domain/service/PedidoService';
+import PedidoRepository from '../domain/repository/PedidoRepository';
+import PedidoRepositoryDatabase from '../infra/repository/database/PedidoRepositoryDatabase';
+import PedidoRepositoryMemory from '../infra/repository/memory/PedidoRepositoryMemory';
+import PostgresDatabase from '../infra/database/postgres/PostgresDatabase';
+
+const postgresDatabase = new PostgresDatabase();
 
 const createCupomDescontoValidoRepositoryStub = (): CupomDescontoRepository => {
   class CupomDescontoRepositoryStub implements CupomDescontoRepository {
@@ -75,6 +81,11 @@ const createProdutoRepositoryStub = (): ProdutoRepository => {
   return new ProdutoRepositoryStub();
 };
 
+const createPedidoRepository = (): PedidoRepository => {
+  //return new PedidoRepositoryMemory();
+  return new PedidoRepositoryDatabase(postgresDatabase);
+};
+
 const createItensPedido = (): CadastrarItemPedidoInput[] => {
   return [
     { id_produto: '1', valor: 6, quantidade: 5 },
@@ -84,6 +95,10 @@ const createItensPedido = (): CadastrarItemPedidoInput[] => {
 };
 
 describe('CadastrarPedidoUseCase', () => {
+  beforeAll(async () => {
+    await postgresDatabase.connect();
+  });
+
   test('Deve criar pedido sem cupom de desconto', async () => {
     const input = {
       cpf: '864.464.227-84',
@@ -94,11 +109,13 @@ describe('CadastrarPedidoUseCase', () => {
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
-      pedidoService
+      pedidoService,
+      pedidoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
@@ -117,11 +134,13 @@ describe('CadastrarPedidoUseCase', () => {
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
-      pedidoService
+      pedidoService,
+      pedidoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
@@ -140,11 +159,13 @@ describe('CadastrarPedidoUseCase', () => {
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
-      pedidoService
+      pedidoService,
+      pedidoRepository
     );
     expect(async () => {
       await cadastrarPedidoUseCase.execute(input);
@@ -155,21 +176,27 @@ describe('CadastrarPedidoUseCase', () => {
     const input = {
       cpf: '864.464.227-84',
       itens: createItensPedido(),
-      cepDestino: '22.222.222-222'
+      cepDestino: '22.222-222'
     };
     const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
     const produtoRepositoryStub = createProdutoRepositoryStub();
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
-      pedidoService
+      pedidoService,
+      pedidoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
+  });
+
+  afterAll(async () => {
+    await postgresDatabase.disconnect();
   });
 });

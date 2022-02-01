@@ -1,5 +1,6 @@
 import Pedido from '../domain/entity/Pedido';
 import CupomDescontoRepository from '../domain/repository/CupomDescontoRepository';
+import PedidoRepository from '../domain/repository/PedidoRepository';
 import ProdutoRepository from '../domain/repository/ProdutoRepository';
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
 import PedidoService from '../domain/service/PedidoService';
@@ -28,7 +29,8 @@ export default class CadastrarPedidoUseCase {
     private _cupomDescontoRepository: CupomDescontoRepository,
     private _produtoRepository: ProdutoRepository,
     private _calculadoraFretePedidoService: CalculadoraFretePedidoService,
-    private _pedidoService: PedidoService
+    private _pedidoService: PedidoService,
+    private _pedidoRepository: PedidoRepository
   ) {}
 
   async execute(input: CadastrarPedidoInput): Promise<CadastrarPedidoOutput> {
@@ -47,7 +49,7 @@ export default class CadastrarPedidoUseCase {
     }
     const valorFrete = this._calculadoraFretePedidoService.calcularFretePedido(pedido);
     pedido.setValorFrete(valorFrete);
-
+    await this._pedidoRepository.save(pedido);
     return {
       valorItens: pedido.getValorItens(),
       valorItensComDesconto: pedido.getValorItensComDesconto(),

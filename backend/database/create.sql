@@ -33,13 +33,13 @@ insert into ccca.cupomDesconto (codigo, valorDesconto, dataValidade)
 
 create table ccca.pedido (
     id varchar(32) PRIMARY KEY,
-    cpf varchar(11),
-    cepDestino varchar(8),
+    cpf varchar(14),
+    cepDestino varchar(10),
     cupomDesconto varchar(32)
 );
 
 insert into ccca.pedido (id, cpf, cepdestino, cupomdesconto)
-    values ('1','86446422784','12345678', 'DESC10');
+    values ('1','864.464.227-84','12.345-678', 'DESC10');
 
 create table ccca.itemPedido (
     id varchar(32) PRIMARY KEY,

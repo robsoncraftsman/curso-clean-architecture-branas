@@ -58,7 +58,6 @@ export default class PedidoRepositoryDatabase implements PedidoRepository {
       ]);
       if (cupomDb) {
         const cupomDesconto = new CupomDesconto(cupomDb.codigo, parseInt(cupomDb.valordesconto), cupomDb.datavalidade);
-        console.log(JSON.stringify(cupomDesconto));
         pedido.addCupomDesconto(cupomDesconto);
       }
     }

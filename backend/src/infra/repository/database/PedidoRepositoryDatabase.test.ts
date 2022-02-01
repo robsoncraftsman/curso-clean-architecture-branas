@@ -32,7 +32,7 @@ describe('Pedido Repository Database', () => {
   test('Deve salvar um novo pedido', async () => {
     const pedidoRepository = createPedidoRepository();
     await pedidoRepository.delete('99');
-    const novoPedido = new Pedido('99', '86446422784', '11111111');
+    const novoPedido = new Pedido('99', '864.464.227-84', '111.111-11');
     novoPedido.addCupomDesconto(new CupomDesconto('DESC10', 10, new Date()));
     const produto = new Produto('1', 'Câmera', 1, 20, 15, 10, 1);
     novoPedido.addItem(produto, 1, 2);
