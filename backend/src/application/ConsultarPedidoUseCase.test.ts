@@ -17,7 +17,6 @@ describe('ConsultarPedidoUseCase', () => {
     expect(consultarPedidoOutput).toBeTruthy();
     expect(consultarPedidoOutput?.id).toBe('1');
     expect(consultarPedidoOutput?.itens.length).toBe(1);
-    console.log(JSON.stringify(consultarPedidoOutput));
   });
 
   afterAll(async () => {
