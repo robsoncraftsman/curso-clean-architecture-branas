@@ -25,7 +25,7 @@ export default class ConsultarPedidoUseCase {
     const pedidoDb = await this._pedidoRepository.findById(input.id);
     if (!pedidoDb) return Promise.resolve(null);
     const consultarItensPedidoOutput: ConsultarItemPedidoOutput[] = [];
-    for (let itemPedidoDb of pedidoDb.itens) {
+    for (const itemPedidoDb of pedidoDb.itens) {
       const consultarItemPedidoOutput: ConsultarItemPedidoOutput = {
         produto: itemPedidoDb.produto.nome,
         valor: itemPedidoDb.valorUnitario,
