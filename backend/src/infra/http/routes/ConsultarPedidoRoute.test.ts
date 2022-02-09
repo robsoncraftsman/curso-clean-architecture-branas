@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-describe('Http', () => {
+describe('ConsultarPedidoRoute', () => {
   test('Deve invocar a API /orders/${code}', async function () {
     const response = await axios({
       url: 'http://localhost:3000/orders/1',
