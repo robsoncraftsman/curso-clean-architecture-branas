@@ -2,7 +2,7 @@ import Produto from '../../../domain/entity/Produto';
 import ProdutoRepository from '../../../domain/repository/ProdutoRepository';
 import Database from '../../database/Database';
 
-export default class ProdutoRepositorydatabase implements ProdutoRepository {
+export default class ProdutoRepositoryDatabase implements ProdutoRepository {
   constructor(private database: Database) {}
 
   async findById(id_produto: string): Promise<Produto | undefined> {
