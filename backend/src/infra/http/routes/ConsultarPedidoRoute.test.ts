@@ -7,7 +7,8 @@ describe('ConsultarPedidoRoute', () => {
       method: 'get'
     });
     const pedido = response.data;
-    expect(pedido.id).toBe('1');
+    expect(pedido).toBeTruthy();
+    expect(pedido.id).toBeTruthy();
     expect(pedido.itens.length).toBe(1);
   });
 });
