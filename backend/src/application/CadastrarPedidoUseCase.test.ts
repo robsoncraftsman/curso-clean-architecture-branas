@@ -11,6 +11,8 @@ import PedidoRepository from '../domain/repository/PedidoRepository';
 import PedidoRepositoryDatabase from '../infra/repository/database/PedidoRepositoryDatabase';
 import PedidoRepositoryMemory from '../infra/repository/memory/PedidoRepositoryMemory';
 import PostgresDatabase from '../infra/database/postgres/PostgresDatabase';
+import ImpostoProdutoRepository from '../domain/repository/ImpostoProdutoRepository';
+import ImpostoProduto from '../domain/entity/ImpostoProduto';
 
 const postgresDatabase = new PostgresDatabase();
 
@@ -86,6 +88,35 @@ const createPedidoRepository = (): PedidoRepository => {
   return new PedidoRepositoryDatabase(postgresDatabase);
 };
 
+const createImpostoProdutoZeradoRepository = () => {
+  class ImpostoProdutoZeradoRepository implements ImpostoProdutoRepository {
+    async findValorImposto(produto: Produto): Promise<number> {
+      return Promise.resolve(0);
+    }
+  }
+  return new ImpostoProdutoZeradoRepository();
+};
+
+const createImpostoProdutoFicticioRepository = () => {
+  class ImpostoProdutoFicticioRepository implements ImpostoProdutoRepository {
+    impostoPodutos = [
+      new ImpostoProduto(new Produto('1', 'Câmera', 1, 20, 15, 10, 1), 20),
+      new ImpostoProduto(new Produto('2', 'Guitarra', 3, 100, 30, 10, 1), 10),
+      new ImpostoProduto(new Produto('3', 'Geladeira', 40, 200, 100, 50, 1), 5)
+    ];
+
+    async findValorImposto(produto: Produto): Promise<number> {
+      const impostoProduto = this.impostoPodutos.find((impostoProduto) => impostoProduto.produto.id === produto.id);
+      if (impostoProduto) {
+        return Promise.resolve(impostoProduto.valor);
+      } else {
+        return Promise.resolve(0);
+      }
+    }
+  }
+  return new ImpostoProdutoFicticioRepository();
+};
+
 const createItensPedido = (): CadastrarItemPedidoInput[] => {
   return [
     { id_produto: '1', valor: 6, quantidade: 5 },
@@ -101,6 +132,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido sem cupom de desconto', async () => {
     const input = {
+      data: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: ''
@@ -110,21 +142,25 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
       pedidoService,
-      pedidoRepository
+      pedidoRepository,
+      impostoProdutoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
+    expect(output.valorImpostos).toBe(0);
   });
 
   test('Deve dar desconto para pedido com cupom válido', async () => {
     const input = {
+      data: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cupomDesconto: 'DESC10',
@@ -135,21 +171,25 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
       pedidoService,
-      pedidoRepository
+      pedidoRepository,
+      impostoProdutoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(94.5);
     expect(output.valorFrete).toBe(510);
+    expect(output.valorImpostos).toBe(0);
   });
 
   test('Não deve dar desconto para pedido com cupom inválido', async () => {
     const input = {
+      data: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cupomDesconto: 'DESC10_INVALIDO',
@@ -160,12 +200,14 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
       pedidoService,
-      pedidoRepository
+      pedidoRepository,
+      impostoProdutoRepository
     );
     expect(async () => {
       await cadastrarPedidoUseCase.execute(input);
@@ -174,6 +216,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido com frete', async () => {
     const input = {
+      data: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: '22.222-222'
@@ -183,17 +226,76 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
       calcularFretePedidoService,
       pedidoService,
-      pedidoRepository
+      pedidoRepository,
+      impostoProdutoRepository
     );
     const output = await cadastrarPedidoUseCase.execute(input);
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
+    expect(output.valorImpostos).toBe(0);
+  });
+
+  test('Deve criar pedido com impostos padrão', async () => {
+    const input = {
+      data: new Date('2000-12-01'),
+      cpf: '864.464.227-84',
+      itens: createItensPedido(),
+      cepDestino: ''
+    };
+    const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
+    const produtoRepositoryStub = createProdutoRepositoryStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoFicticioRepository();
+    const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
+      cupomDescontoValidoRepositoryStub,
+      produtoRepositoryStub,
+      calcularFretePedidoService,
+      pedidoService,
+      pedidoRepository,
+      impostoProdutoRepository
+    );
+    const output = await cadastrarPedidoUseCase.execute(input);
+    expect(output.valorItens).toBe(105);
+    expect(output.valorItensComDesconto).toBe(105);
+    expect(output.valorFrete).toBe(510);
+    expect(output.valorImpostos).toBe(13.25);
+  });
+
+  test('Deve criar pedido com impostos especial', async () => {
+    const input = {
+      data: new Date('2000-01-01'),
+      cpf: '864.464.227-84',
+      itens: createItensPedido(),
+      cepDestino: ''
+    };
+    const cupomDescontoValidoRepositoryStub = createCupomDescontoValidoRepositoryStub();
+    const produtoRepositoryStub = createProdutoRepositoryStub();
+    const calcularFretePedidoService = createCalculadoraFretePedidoService();
+    const pedidoService = createPedidoService();
+    const pedidoRepository = createPedidoRepository();
+    const impostoProdutoRepository = createImpostoProdutoFicticioRepository();
+    const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
+      cupomDescontoValidoRepositoryStub,
+      produtoRepositoryStub,
+      calcularFretePedidoService,
+      pedidoService,
+      pedidoRepository,
+      impostoProdutoRepository
+    );
+    const output = await cadastrarPedidoUseCase.execute(input);
+    expect(output.valorItens).toBe(105);
+    expect(output.valorItensComDesconto).toBe(105);
+    expect(output.valorFrete).toBe(510);
+    expect(output.valorImpostos).toBe(6.625);
   });
 
   afterAll(async () => {

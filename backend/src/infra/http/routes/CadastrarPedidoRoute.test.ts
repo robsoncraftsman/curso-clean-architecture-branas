@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 describe('CadastrarPedidoRoute', () => {
-  test('Deve invocar a API /orders/${code}', async function () {
+  test.skip('Deve invocar a API /orders/${code}', async function () {
     const response = await axios({
       url: 'http://localhost:3000/orders',
       method: 'post',

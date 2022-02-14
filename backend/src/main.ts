@@ -12,6 +12,8 @@ import CalculadoraFretePedidoService from './domain/service/CalculadoraFretePedi
 import PedidoService from './domain/service/PedidoService';
 import CalculadoraFreteProdutoService from './domain/service/CalculadoraFreteProdutoService';
 import CalculadoraDistanciaEntreCeps from './domain/gateway/CalculadoraDistanciaEntreCeps';
+import ImpostoProdutoRepository from './domain/repository/ImpostoProdutoRepository';
+import Produto from './domain/entity/Produto';
 
 const database = new PostgresDatabase();
 database.connect();
@@ -36,6 +38,15 @@ const calculadoraFretePedidoService = new CalculadoraFretePedidoService(
   createCalculadoraDistanciaEntreCepsStub(),
   calculadoraFreteProdutoService
 );
+const createImpostoProdutoZeradoRepository = () => {
+  class ImpostoProdutoZeradoRepository implements ImpostoProdutoRepository {
+    async findValorImposto(produto: Produto): Promise<number> {
+      return Promise.resolve(0);
+    }
+  }
+  return new ImpostoProdutoZeradoRepository();
+};
+const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
 const pedidoService = new PedidoService();
 
 const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
@@ -43,7 +54,8 @@ const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
   produtoRepository,
   calculadoraFretePedidoService,
   pedidoService,
-  pedidoRepository
+  pedidoRepository,
+  impostoProdutoRepository
 );
 const cadastrarPedidoRoute = new CadastrarPedidoRoute(cadastrarPedidoUseCase);
 

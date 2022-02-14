@@ -1,5 +1,8 @@
+import ItemPedido from '../domain/entity/ItemPedido';
 import Pedido from '../domain/entity/Pedido';
+import CalculadoraImpostosFactory from '../domain/factory/CalculadoraImpostosFactory';
 import CupomDescontoRepository from '../domain/repository/CupomDescontoRepository';
+import ImpostoProdutoRepository from '../domain/repository/ImpostoProdutoRepository';
 import PedidoRepository from '../domain/repository/PedidoRepository';
 import ProdutoRepository from '../domain/repository/ProdutoRepository';
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
@@ -12,6 +15,7 @@ export type CadastrarItemPedidoInput = {
 };
 
 export type CadastrarPedidoInput = {
+  data: Date;
   cpf: string;
   itens: CadastrarItemPedidoInput[];
   cupomDesconto?: string;
@@ -22,6 +26,7 @@ export type CadastrarPedidoOutput = {
   valorItens: number;
   valorItensComDesconto: number;
   valorFrete: number;
+  valorImpostos: number;
 };
 
 export default class CadastrarPedidoUseCase {
@@ -30,7 +35,8 @@ export default class CadastrarPedidoUseCase {
     private _produtoRepository: ProdutoRepository,
     private _calculadoraFretePedidoService: CalculadoraFretePedidoService,
     private _pedidoService: PedidoService,
-    private _pedidoRepository: PedidoRepository
+    private _pedidoRepository: PedidoRepository,
+    private _impostoProdutoRepository: ImpostoProdutoRepository
   ) {}
 
   async execute(input: CadastrarPedidoInput): Promise<CadastrarPedidoOutput> {
@@ -49,11 +55,20 @@ export default class CadastrarPedidoUseCase {
     }
     const valorFrete = this._calculadoraFretePedidoService.calcularFretePedido(pedido);
     pedido.setValorFrete(valorFrete);
+    const calculadoraImpostos = CalculadoraImpostosFactory.createCalculadoraImpostosService(
+      input.data,
+      this._impostoProdutoRepository
+    );
+    let valorImpostos = 0;
+    for (const itemPedido of pedido.itens) {
+      valorImpostos += await calculadoraImpostos.calcularImposto(itemPedido);
+    }
     await this._pedidoRepository.save(pedido);
     return {
       valorItens: pedido.getValorItens(),
       valorItensComDesconto: pedido.getValorItensComDesconto(),
-      valorFrete: pedido.getValorFrete()
+      valorFrete: pedido.getValorFrete(),
+      valorImpostos
     };
   }
 }
