@@ -132,7 +132,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido sem cupom de desconto', async () => {
     const input = {
-      data: new Date(),
+      dataPedido: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: ''
@@ -160,7 +160,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve dar desconto para pedido com cupom válido', async () => {
     const input = {
-      data: new Date(),
+      dataPedido: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cupomDesconto: 'DESC10',
@@ -189,7 +189,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Não deve dar desconto para pedido com cupom inválido', async () => {
     const input = {
-      data: new Date(),
+      dataPedido: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cupomDesconto: 'DESC10_INVALIDO',
@@ -216,7 +216,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido com frete', async () => {
     const input = {
-      data: new Date(),
+      dataPedido: new Date(),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: '22.222-222'
@@ -244,7 +244,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido com impostos padrão', async () => {
     const input = {
-      data: new Date('2000-12-01'),
+      dataPedido: new Date('2000-12-01'),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: ''
@@ -272,7 +272,7 @@ describe('CadastrarPedidoUseCase', () => {
 
   test('Deve criar pedido com impostos especial', async () => {
     const input = {
-      data: new Date('2000-01-01'),
+      dataPedido: new Date('2000-01-01'),
       cpf: '864.464.227-84',
       itens: createItensPedido(),
       cepDestino: ''

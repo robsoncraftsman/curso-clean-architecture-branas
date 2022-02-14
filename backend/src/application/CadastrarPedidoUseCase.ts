@@ -15,7 +15,7 @@ export type CadastrarItemPedidoInput = {
 };
 
 export type CadastrarPedidoInput = {
-  data: Date;
+  dataPedido: Date;
   cpf: string;
   itens: CadastrarItemPedidoInput[];
   cupomDesconto?: string;
@@ -55,8 +55,11 @@ export default class CadastrarPedidoUseCase {
     }
     const valorFrete = this._calculadoraFretePedidoService.calcularFretePedido(pedido);
     pedido.setValorFrete(valorFrete);
+    if (typeof input.dataPedido === 'string') {
+      input.dataPedido = new Date(input.dataPedido);
+    }
     const calculadoraImpostos = CalculadoraImpostosFactory.createCalculadoraImpostosService(
-      input.data,
+      input.dataPedido,
       this._impostoProdutoRepository
     );
     let valorImpostos = 0;
