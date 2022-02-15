@@ -14,6 +14,9 @@ import CalculadoraFreteProdutoService from './domain/service/CalculadoraFretePro
 import CalculadoraDistanciaEntreCeps from './domain/gateway/CalculadoraDistanciaEntreCeps';
 import ImpostoProdutoRepository from './domain/repository/ImpostoProdutoRepository';
 import Produto from './domain/entity/Produto';
+import OperacaoEstoqueRepositoryMemory from './infra/repository/memory/OperacaoEstoqueRepositoryMemory';
+import OperacaoEstoqueRepository from './domain/repository/OperacaoEstoqueRepository';
+import OperacaoEstoque from './domain/entity/OperacaoEstoque';
 
 const database = new PostgresDatabase();
 database.connect();
@@ -47,6 +50,15 @@ const createImpostoProdutoZeradoRepository = () => {
   return new ImpostoProdutoZeradoRepository();
 };
 const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
+const createOperacaoEstoqueCheioRepository = (): OperacaoEstoqueRepository => {
+  const operacaoEstoqueCheioRepository = new OperacaoEstoqueRepositoryMemory();
+  operacaoEstoqueCheioRepository.add(new OperacaoEstoque('1', 'IN', 100, new Date()));
+  operacaoEstoqueCheioRepository.add(new OperacaoEstoque('2', 'IN', 100, new Date()));
+  operacaoEstoqueCheioRepository.add(new OperacaoEstoque('3', 'IN', 100, new Date()));
+  return operacaoEstoqueCheioRepository;
+};
+const operacaoEstoqueRepository = createOperacaoEstoqueCheioRepository();
+
 const pedidoService = new PedidoService();
 
 const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
@@ -55,7 +67,8 @@ const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
   calculadoraFretePedidoService,
   pedidoService,
   pedidoRepository,
-  impostoProdutoRepository
+  impostoProdutoRepository,
+  operacaoEstoqueRepository
 );
 const cadastrarPedidoRoute = new CadastrarPedidoRoute(cadastrarPedidoUseCase);
 

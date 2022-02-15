@@ -7,6 +7,9 @@ import PedidoRepository from '../domain/repository/PedidoRepository';
 import ProdutoRepository from '../domain/repository/ProdutoRepository';
 import CalculadoraFretePedidoService from '../domain/service/CalculadoraFretePedidoService';
 import PedidoService from '../domain/service/PedidoService';
+import OperacaoEstoqueRepository from '../domain/repository/OperacaoEstoqueRepository';
+import CalculadoraEstoque from '../domain/service/CalculadoraEstoque';
+import OperacaoEstoque from '../domain/entity/OperacaoEstoque';
 
 export type CadastrarItemPedidoInput = {
   id_produto: string;
@@ -36,7 +39,8 @@ export default class CadastrarPedidoUseCase {
     private _calculadoraFretePedidoService: CalculadoraFretePedidoService,
     private _pedidoService: PedidoService,
     private _pedidoRepository: PedidoRepository,
-    private _impostoProdutoRepository: ImpostoProdutoRepository
+    private _impostoProdutoRepository: ImpostoProdutoRepository,
+    private _operacaoEstoqueRepository: OperacaoEstoqueRepository
   ) {}
 
   async execute(input: CadastrarPedidoInput): Promise<CadastrarPedidoOutput> {
@@ -45,7 +49,15 @@ export default class CadastrarPedidoUseCase {
     for (const item of input.itens) {
       const produto = await this._produtoRepository.findById(item.id_produto);
       if (!produto) throw Error(`Produto ${item.id_produto} não encontrado`);
+      const operacoesEstoque = await this._operacaoEstoqueRepository.findOperacoesEstoqueProduto(produto.id);
+      const calculadoraEstoque = new CalculadoraEstoque();
+      const estoque = calculadoraEstoque.calcularEstoque(operacoesEstoque);
+      if (estoque < item.quantidade)
+        throw Error(
+          `Produto "${produto.id}" não possui estoque suficente. Necessário ${item.quantidade}. Estoque ${estoque}.`
+        );
       pedido.addItem(produto, item.valor, item.quantidade);
+      await this._operacaoEstoqueRepository.add(new OperacaoEstoque(produto.id, 'OUT', item.quantidade, new Date()));
     }
     if (input.cupomDesconto) {
       const cupomDesconto = await this._cupomDescontoRepository.findByCodigo(input.cupomDesconto);
