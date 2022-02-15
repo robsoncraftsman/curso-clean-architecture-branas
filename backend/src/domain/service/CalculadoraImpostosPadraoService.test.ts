@@ -1,31 +1,12 @@
+import ImpostoProdutoRepositoryMemory from '../../infra/repository/memory/ImpostoProdutoRepositoryMemory';
 import ImpostoProduto from '../entity/ImpostoProduto';
 import ItemPedido from '../entity/ItemPedido';
 import Produto from '../entity/Produto';
 import ImpostoProdutoRepository from '../repository/ImpostoProdutoRepository';
 import CalculadoraImpostosPadraoService from './CalculadoraImpostosPadraoService';
 
-const createImpostoProdutoRepository = () => {
-  class ImpostoProdutoRepositoryStub implements ImpostoProdutoRepository {
-    impostoPodutos = [
-      new ImpostoProduto(new Produto('1', 'Câmera', 1, 20, 15, 10, 1), 20),
-      new ImpostoProduto(new Produto('2', 'Guitarra', 3, 100, 30, 10, 1), 10),
-      new ImpostoProduto(new Produto('3', 'Geladeira', 40, 200, 100, 50, 1), 5)
-    ];
-
-    async findValorImposto(produto: Produto): Promise<number> {
-      const impostoProduto = this.impostoPodutos.find((impostoProduto) => impostoProduto.produto.id === produto.id);
-      if (impostoProduto) {
-        return Promise.resolve(impostoProduto.valor);
-      } else {
-        return Promise.resolve(0);
-      }
-    }
-  }
-  return new ImpostoProdutoRepositoryStub();
-};
-
 const createSut = () => {
-  return new CalculadoraImpostosPadraoService(createImpostoProdutoRepository());
+  return new CalculadoraImpostosPadraoService(new ImpostoProdutoRepositoryMemory());
 };
 
 describe('CalculadoraImpostosPadraoService', () => {

@@ -13,6 +13,7 @@ import PedidoRepositoryMemory from '../infra/repository/memory/PedidoRepositoryM
 import PostgresDatabase from '../infra/database/postgres/PostgresDatabase';
 import ImpostoProdutoRepository from '../domain/repository/ImpostoProdutoRepository';
 import ImpostoProduto from '../domain/entity/ImpostoProduto';
+import ImpostoProdutoRepositoryMemory from '../infra/repository/memory/ImpostoProdutoRepositoryMemory';
 
 const postgresDatabase = new PostgresDatabase();
 
@@ -83,38 +84,13 @@ const createProdutoRepositoryStub = (): ProdutoRepository => {
   return new ProdutoRepositoryStub();
 };
 
+const createImpostoProdutoRepository = (): ImpostoProdutoRepository => {
+  return new ImpostoProdutoRepositoryMemory();
+};
+
 const createPedidoRepository = (): PedidoRepository => {
   //return new PedidoRepositoryMemory();
   return new PedidoRepositoryDatabase(postgresDatabase);
-};
-
-const createImpostoProdutoZeradoRepository = () => {
-  class ImpostoProdutoZeradoRepository implements ImpostoProdutoRepository {
-    async findValorImposto(produto: Produto): Promise<number> {
-      return Promise.resolve(0);
-    }
-  }
-  return new ImpostoProdutoZeradoRepository();
-};
-
-const createImpostoProdutoFicticioRepository = () => {
-  class ImpostoProdutoFicticioRepository implements ImpostoProdutoRepository {
-    impostoPodutos = [
-      new ImpostoProduto(new Produto('1', 'Câmera', 1, 20, 15, 10, 1), 20),
-      new ImpostoProduto(new Produto('2', 'Guitarra', 3, 100, 30, 10, 1), 10),
-      new ImpostoProduto(new Produto('3', 'Geladeira', 40, 200, 100, 50, 1), 5)
-    ];
-
-    async findValorImposto(produto: Produto): Promise<number> {
-      const impostoProduto = this.impostoPodutos.find((impostoProduto) => impostoProduto.produto.id === produto.id);
-      if (impostoProduto) {
-        return Promise.resolve(impostoProduto.valor);
-      } else {
-        return Promise.resolve(0);
-      }
-    }
-  }
-  return new ImpostoProdutoFicticioRepository();
 };
 
 const createItensPedido = (): CadastrarItemPedidoInput[] => {
@@ -142,7 +118,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
@@ -155,7 +131,6 @@ describe('CadastrarPedidoUseCase', () => {
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
-    expect(output.valorImpostos).toBe(0);
   });
 
   test('Deve dar desconto para pedido com cupom válido', async () => {
@@ -171,7 +146,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
@@ -184,7 +159,6 @@ describe('CadastrarPedidoUseCase', () => {
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(94.5);
     expect(output.valorFrete).toBe(510);
-    expect(output.valorImpostos).toBe(0);
   });
 
   test('Não deve dar desconto para pedido com cupom inválido', async () => {
@@ -200,7 +174,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
@@ -226,7 +200,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoZeradoRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
@@ -239,7 +213,6 @@ describe('CadastrarPedidoUseCase', () => {
     expect(output.valorItens).toBe(105);
     expect(output.valorItensComDesconto).toBe(105);
     expect(output.valorFrete).toBe(510);
-    expect(output.valorImpostos).toBe(0);
   });
 
   test('Deve criar pedido com impostos padrão', async () => {
@@ -254,7 +227,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoFicticioRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
@@ -282,7 +255,7 @@ describe('CadastrarPedidoUseCase', () => {
     const calcularFretePedidoService = createCalculadoraFretePedidoService();
     const pedidoService = createPedidoService();
     const pedidoRepository = createPedidoRepository();
-    const impostoProdutoRepository = createImpostoProdutoFicticioRepository();
+    const impostoProdutoRepository = createImpostoProdutoRepository();
     const cadastrarPedidoUseCase = new CadastrarPedidoUseCase(
       cupomDescontoValidoRepositoryStub,
       produtoRepositoryStub,
